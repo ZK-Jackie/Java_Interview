@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8" ?>     <!--固定头-->
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jackie.mapper.TeamMapper">
+
+    <select id="selectByIdAndName" resultType="com.jackie.pojo.Team">
+        select * from team
+        <where>
+            <!--条件1：在数组里-->
+            team_id in
+            <foreach collection="ids" item="id" separator="," open="(" close=")">
+                #{id}
+            </foreach>
+            <!--条件2：名字符合-->
+            <if test="name != null and name != ''">
+                and name like concat('%', #{name}, '%')
+            </if>
+        </where>
+
+    </select>
+
+    <select id="selectTeam" resultType="com.jackie.pojo.Team">
+        select * from team
+        <where>     <!--根据情况，mybatis自动调整确认是否加where或过滤and-->
+                status = 0
+            <if test="name != null and name != ''"> <!--根据条件，mybatis自动调整确认是否需要添加该条件-->
+                and description like concat('%', #{name}, '%')
+            </if>
+        </where>
+        order by update_time desc
+    </select>
+
+    <!--获得新行id-->
+    <insert id="newTeam" useGeneratedKeys="true" keyProperty="teamId">
+        insert into team(name, join_num, creator_id)
+        values (#{name}, #{joinNum}, #{creatorId})
+    </insert>
+
+</mapper>
