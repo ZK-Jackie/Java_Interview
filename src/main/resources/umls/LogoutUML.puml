@@ -1,0 +1,19 @@
+@startuml
+'https://plantuml.com/sequence-diagram
+title HiDrink登录业务逻辑图
+
+actor "User" as user
+
+participant "User Agent" as userAgent
+entity "Vue2 Web" as vue
+
+
+autonumber
+user->userAgent:发送注销请求
+activate userAgent
+userAgent->vue:发送注销请求
+activate vue
+vue->vue:清除浏览器cookies信息
+vue->userAgent:通知处理结果
+userAgent->user:成功登出
+@enduml

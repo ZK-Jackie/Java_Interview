@@ -1,0 +1,52 @@
+@startuml
+'https://plantuml.com/sequence-diagram
+title HiDrink登录业务逻辑图
+
+actor "User" as user
+
+participant "User Agent" as userAgent
+entity "Vue2 Web" as vue
+participant "Servlet Filter" as filter
+control "SpringBoot2" as java
+participant "Global Exception Handler" as handler
+database "MySQL8.0" as sql
+
+
+autonumber
+user->userAgent:访问注册页面
+activate userAgent
+userAgent->vue:发送“/register”路由页面请求
+activate vue
+vue->userAgent:返回注册页面
+user->userAgent:输入要求信息
+userAgent->vue:传递用户输入结果
+vue->java:发送“/register”POST请求，含合规信息
+activate java
+java->java:Service处理controller中的请求
+
+autonumber 8.1
+activate java
+java->sql:身份1：发送员工表（emp）数据插入请求
+activate sql
+java->sql:身份2：发送顾客表（cus）数据插入请求
+deactivate java
+
+
+autonumber 9.1
+sql->java:注册成功
+sql->handler:注册失败
+activate handler
+autonumber 9.2.1
+handler->handler:处理错误信息
+autonumber 9.3
+handler->java:注册失败及原因
+autonumber 10
+java->vue:返回注册结果
+autonumber 11.1
+vue->userAgent:注册成功：返回注册成功信息
+vue->userAgent:注册失败：返回注册失败信息
+
+autonumber 12
+userAgent->user:结果通知
+
+@enduml

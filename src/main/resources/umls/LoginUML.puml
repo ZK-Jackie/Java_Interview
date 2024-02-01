@@ -1,0 +1,47 @@
+@startuml
+'https://plantuml.com/sequence-diagram
+title HiDrink登录业务逻辑图
+
+actor "User" as user
+
+participant "User Agent" as userAgent
+entity "Vue2 Web" as vue
+participant "Servlet Filter" as filter
+control "SpringBoot2" as java
+participant "JWT Utilities0.11" as jwt
+database "MySQL8.0" as sql
+
+
+autonumber
+user->userAgent:访问登录页面
+activate userAgent
+userAgent->vue:发送“/login”路由页面请求
+activate vue
+vue->userAgent:返回登录页面
+user->userAgent:输入账号密码
+userAgent->vue:传递用户输入结果
+vue->java:发送“/login”POST请求，含合规的账号、密码、身份信息
+activate java
+java->java:Service处理Controller中的请求
+
+autonumber  8.1
+activate java
+java->sql:身份0：在管理员表(admin)和员工表(emp)中校验账号密码
+activate sql
+java->sql:身份2：在顾客表(cus)中校验账号密码
+deactivate java
+
+autonumber 9
+sql->jwt:校验结果
+activate jwt
+jwt->java:依校验结果选择性返回jwt令牌
+java->vue:返回校验结果——成功：jwt；失败：“用户名或密码错误”
+autonumber 12.1
+vue->userAgent:登录校验成功：jwt令牌装配入cookies
+vue->userAgent:登录校验失败：展示spring通报信息
+
+autonumber 13
+userAgent->user:登录结果通知
+
+
+@enduml

@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8" ?>     <!--固定头-->
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hidrink.mapper.GoodsMapper">
+
+    <select id="getGoods" resultType="com.hidrink.pojo.Goods">
+        select * from Goods
+        <where>     <!--根据情况，mybatis自动调整确认是否加where或过滤and-->
+            <if test="name != null and name != ''"> <!--根据条件，mybatis自动调整确认是否需要添加该条件-->
+                and name like concat('%', #{name}, '%')
+            </if>
+            <if test="minPrice != null and minPrice != ''">
+                and price &gt;= #{minPrice} <!-- &gt;为大于号  &lt;为小于号 -->
+            </if>
+            <if test="maxPrice != null and maxPrice != ''">
+                and price &lt;= #{maxPrice}
+            </if>
+        </where>
+        order by price
+        <if test="order == 0">
+            desc
+        </if>
+    </select>
+
+</mapper>
